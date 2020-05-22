@@ -1,27 +1,18 @@
 FROM node:12
 
-SHELL ["/bin/bash"]
-ARG HOST_UID=1000
-ARG USERNAME=thomas
-# ENV HUID=${HOST_UID}
-
-RUN useradd -u ${HOST_UID} ${USERNAME}
-
-USER thomas
-COPY ./app /usr/src/app
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+COPY ./app /usr/src/app
 
+COPY ./app/package*.json ./
+RUN rm -rf ./package-lock.json
 
-# FROM busybox
-# ARG HOST_UID=1000
-# RUN adduser -D -H -u ${HOST_UID} -s /bin/sh npm
-# USER npm
-# RUN echo "i'm $(whoami) and have uid: ${HOST_UID}"
+RUN npm install --no-optional && npm cache clean --force
+RUN npm install express --save
+RUN npm i body-parser --save
+RUN npm install nodemon --save-dev
+RUN useradd -md /bin/bash local
 
-# version: '2'
-# services:
-#   foo:
-#     build:
-#       context: .
-#       args:
-#         HOST_UID: ${UID}
+EXPOSE 3000
+
+CMD [ "npm", "start" ]

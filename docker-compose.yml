@@ -1,17 +1,21 @@
-version: '3'
+version: '3.7'
  
 services:
   node:
     build:
       context: .
-      args:
-        HOST_UID: ${UID}
+      # args:
+      #   USER_ID: $(id -u)
+      #   GROUP_ID: $(id -g)
     # restart: always
     # restart: unless-stopped
-    # ports:
-    #   - 3000:3000
+    # user: node
+    ports:
+      - 3000:3000
     volumes:
       - ./app:/usr/src/app
+      - /usr/src/app/node_modules
+    working_dir: /usr/src/app
 
     # command: >
     #   sh -c "npm install -g pm2 && npm install && pm2-runtime server.js --watch"
